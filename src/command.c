@@ -18,7 +18,6 @@ int encode_file(const char *in_file_name, const char *out_file_name)
 	}
 	CodeUnits code_units;
 	uint32_t code_point;
-
 	while (fscanf(in,"%" SCNx32, &code_point) != EOF) {
 		printf("> %" PRIx32 "\n", code_point);		
 		if (encode(code_point, &code_units) != -1) {
@@ -46,18 +45,22 @@ int decode_file(const char *in_file_name, const char *out_file_name)
 		return -1;
 	}
 	int place = 0;
-	uint32_t code_point;
-	while (fscanf(in,"%" SCNx32, &code_point) != EOF) {
-		if (read_next_code_unit(in, &code_units, &place) == -1) {
-			printf("Error in read_next_code_unit\n");
-			return 0;
-		}
+	//uint32_t code_point;
+	while (!read_next_code_unit(in, &code_units, &place)) {
 		printf("Pointer = %d\n", place);
 		printf("> %" PRIx32 "\n", decode(&code_units));	
-		fprintf(out, " %" PRIx32, decode(&code_units));
+		fprintf(out, "%" PRIx32, decode(&code_units));
 		fprintf(out, "\n");
-			
 	}
+	/*else {
+		printf("Error in read_next_code_unit\n");
+		return 0;
+	}
+	printf("Pointer = %d\n", place);
+	printf("> %" PRIx32 "\n", decode(&code_units));	
+	fprintf(out, "%" PRIx32, decode(&code_units));
+	fprintf(out, "\n");
+		*/
 	fclose(in);
 	fclose(out);
 	return 0;

@@ -64,14 +64,14 @@ int read_next_code_unit(FILE *in, CodeUnits *code_units, int *place)
 	uint8_t buf[4];
 	int i = 0;
 	code_zero(code_units);
-	while (i == 0) {
-		fread(&buf[i], 1, 1,in);
+	fread(&buf[i], 1, 1,in);
+	while (!feof(in)) {
 		*place = *place + 1;
 		if ((buf[i] >> 6) == 0x2) {
 			code_zero(code_units);
 			return 0;
 		}
-		else if (buf[i] <= 0x7F) {
+		if (buf[i] <= 0x7F) {
 			code_units->code[0] = buf[0];
 			code_units->length = 1;
 			return 0;
@@ -135,7 +135,6 @@ int read_next_code_unit(FILE *in, CodeUnits *code_units, int *place)
 			}
 			
 		}
-	i = -1;
 	}
 	return -1;
 }
